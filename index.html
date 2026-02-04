@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ค้นหาหน่วยเลือกตั้ง</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", system-ui,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+
+        /* 🎨 พื้นหลังไล่สีสวยงาม */
+        background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* เพิ่มเอฟเฟกต์พื้นหลัง */
+      body::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 1px,
+          transparent 1px
+        );
+        background-size: 50px 50px;
+        animation: moveBackground 20s linear infinite;
+      }
+
+      @keyframes moveBackground {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(50px, 50px);
+        }
+      }
+
+      /* ===== CONTAINER ===== */
+      .container {
+        width: 100%;
+        max-width: 440px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== CARD ===== */
+      .card {
+        padding: clamp(24px, 5vw, 36px);
+        border-radius: 24px;
+
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.1),
+          0 2px 8px rgba(0, 0, 0, 0.05);
+
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+      }
+
+      /* ===== DIAGRAM ===== */
+      .diagram-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .diagram {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        background: white;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .diagram:hover {
+        transform: scale(1.02);
+      }
+
+      /* Modal สำหรับดูรูปขยาย */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        position: relative;
+        margin: auto;
+        padding: 20px;
+        width: 95%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-image {
+        max-width: 100%;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.5);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .close-modal:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      .zoom-hint {
+        text-align: center;
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 8px;
+        margin-bottom: 16px;
+      }
+
+      /* ===== TITLE ===== */
+      h2 {
+        text-align: center;
+        margin: 0 0 8px;
+        font-size: clamp(20px, 5vw, 26px);
+        color: #1e293b;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: clamp(13px, 3vw, 15px);
+        margin-bottom: 24px;
+      }
+
+      /* ===== INPUT GROUP ===== */
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      input {
+        width: 100%;
+        padding: 16px 16px 16px 48px;
+        font-size: clamp(15px, 4vw, 17px);
+        border-radius: 14px;
+        border: 2px solid #e2e8f0;
+        outline: none;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        font-family: inherit;
+      }
+
+      input:focus {
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      input::placeholder {
+        color: #94a3b8;
+      }
+
+      /* ไอคอนในช่อง input */
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        pointer-events: none;
+      }
+
+      /* ===== BUTTON ===== */
+      button {
+        width: 100%;
+        padding: 16px;
+        font-size: clamp(15px, 4vw, 17px);
+        border-radius: 14px;
+        border: none;
+
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        font-family: inherit;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      /* ===== RESULT ===== */
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 16px;
+        display: none;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .result.success {
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        border: 2px solid #86efac;
+      }
+
+      .result-header {
+        font-size: clamp(18px, 5vw, 22px);
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #166534;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .result-body {
+        font-size: clamp(14px, 4vw, 16px);
+        color: #15803d;
+        line-height: 1.6;
+      }
+
+      .result-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(22, 101, 52, 0.1);
+      }
+
+      .result-row:last-child {
+        border-bottom: none;
+      }
+
+      .result-label {
+        font-weight: 500;
+        color: #15803d;
+      }
+
+      .result-value {
+        font-weight: 700;
+        color: #166534;
+      }
+
+      .error {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border: 2px solid #fca5a5;
+        text-align: center;
+        color: #991b1b;
+        font-weight: 600;
+        font-size: clamp(15px, 4vw, 17px);
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: clamp(12px, 3vw, 14px);
+      }
+
+      /* ===== MOBILE OPTIMIZATIONS ===== */
+      @media (max-width: 480px) {
+        body {
+          padding: 12px;
+        }
+
+        .card {
+          border-radius: 20px;
+        }
+
+        input,
+        button {
+          padding: 14px 14px 14px 44px;
+        }
+
+        .result {
+          padding: 16px;
+        }
+      }
+
+      /* สำหรับหน้าจอเล็กมาก */
+      @media (max-width: 360px) {
+        .card {
+          padding: 20px;
+        }
+
+        .logo {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      /* โหมดแนวนอน */
+      @media (orientation: landscape) and (max-height: 500px) {
+        body {
+          padding: 12px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .logo {
+          width: 60px;
+          height: 60px;
+        }
+
+        h2 {
+          margin-bottom: 4px;
+        }
+
+        .subtitle {
+          margin-bottom: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <h2>ค้นหาหน่วยเลือกตั้ง</h2>
+        <p class="subtitle">กรอกเลขลำดับเพื่อค้นหาข้อมูล</p>
+
+        <!-- 📊 แผนผัง -->
+        <div class="diagram-container">
+          <img
+            src="logo.jpg"
+            class="diagram"
+            alt="แผนผังหน่วยออกเสียงประชามติ"
+            onclick="openModal()"
+          />
+          <div class="zoom-hint">👆 แตะที่รูปเพื่อขยาย</div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="input-icon">🔍</span>
+            <input
+              id="numberInput"
+              placeholder="กรอกเลขลำดับ 1 - 35,725"
+              onkeypress="if (event.key === 'Enter') search();"
+              inputmode="numeric"
+            />
+          </div>
+        </div>
+
+        <button onclick="search()">🔎 ค้นหาข้อมูล</button>
+
+        <div id="result" class="result"></div>
+      </div>
+
+      <div class="footer">📊 ระบบค้นหาหน่วยเลือกตั้ง</div>
+    </div>
+
+    <!-- Modal สำหรับดูรูปขยาย -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+      <span class="close-modal">&times;</span>
+      <div class="modal-content">
+        <img
+          src="logo.jpg"
+          class="modal-image"
+          alt="แผนผังหน่วยออกเสียงประชามติ"
+        />
+      </div>
+    </div>
+
+    <script>
+      // Modal functions
+      function openModal() {
+        document.getElementById("imageModal").style.display = "block";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeModal();
+        }
+      });
+
+      const ranges = [
+        { province: "กระบี่", unit: 1, start: 1, end: 95 },
+        { province: "กรุงเทพมหานคร", unit: 1, start: 96, end: 799 },
+        { province: "กรุงเทพมหานคร", unit: 2, start: 800, end: 1613 },
+        { province: "กรุงเทพมหานคร", unit: 3, start: 1614, end: 2410 },
+        { province: "กาญจนบุรี", unit: 4, start: 2411, end: 2565 },
+        { province: "กาฬสินธุ์", unit: 4, start: 2566, end: 2713 },
+        { province: "กำแพงเพชร", unit: 4, start: 2714, end: 3219 },
+        { province: "กำแพงเพชร", unit: 5, start: 3220, end: 3437 },
+        { province: "ขอนแก่น", unit: 5, start: 3438, end: 3782 },
+        { province: "จันทบุรี", unit: 5, start: 3783, end: 3852 },
+        { province: "ฉะเชิงเทรา", unit: 5, start: 3853, end: 3980 },
+        { province: "ชลบุรี", unit: 5, start: 3981, end: 4024 },
+        { province: "ชลบุรี", unit: 6, start: 4025, end: 4307 },
+        { province: "ชัยนาท", unit: 6, start: 4308, end: 4397 },
+        { province: "ชัยภูมิ", unit: 6, start: 4398, end: 4562 },
+        { province: "ชุมพร", unit: 6, start: 4563, end: 4648 },
+        { province: "เชียงราย", unit: 6, start: 4649, end: 4824 },
+        { province: "เชียงราย", unit: 7, start: 4825, end: 5616 },
+        { province: "เชียงราย", unit: 8, start: 5617, end: 6430 },
+        { province: "เชียงราย", unit: 9, start: 6431, end: 7244 },
+        { province: "เชียงราย", unit: 10, start: 7245, end: 8036 },
+        { province: "เชียงราย", unit: 11, start: 8037, end: 8828 },
+        { province: "เชียงราย", unit: 12, start: 8829, end: 8970 },
+        { province: "เชียงใหม่", unit: 12, start: 8971, end: 9241 },
+        { province: "ตรัง", unit: 12, start: 9242, end: 9354 },
+        { province: "ตราด", unit: 12, start: 9355, end: 9392 },
+        { province: "ตาก", unit: 12, start: 9393, end: 9634 },
+        { province: "ตาก", unit: 13, start: 9635, end: 10426 },
+        { province: "ตาก", unit: 14, start: 10427, end: 10663 },
+        { province: "นครนายก", unit: 14, start: 10664, end: 10705 },
+        { province: "นครปฐม", unit: 14, start: 10706, end: 10895 },
+        { province: "นครพนม", unit: 14, start: 10896, end: 10968 },
+        { province: "นครราชสีมา", unit: 14, start: 10969, end: 11122 },
+        { province: "นครราชสีมา", unit: 15, start: 11123, end: 11299 },
+        { province: "นครศรีธรรมราช", unit: 15, start: 11300, end: 11526 },
+        { province: "นครสวรรค์", unit: 15, start: 11527, end: 11922 },
+        { province: "นครสวรรค์", unit: 16, start: 11923, end: 12398 },
+        { province: "นนทบุรี", unit: 16, start: 12399, end: 12728 },
+        { province: "นนทบุรี", unit: 17, start: 12729, end: 12887 },
+        { province: "นราธิวาส", unit: 17, start: 12888, end: 12957 },
+        { province: "น่าน", unit: 17, start: 12958, end: 13529 },
+        { province: "น่าน", unit: 18, start: 13530, end: 14321 },
+        { province: "น่าน", unit: 19, start: 14322, end: 15072 },
+        { province: "บึงกาฬ", unit: 19, start: 15073, end: 15130 },
+        { province: "บุรีรัมย์", unit: 20, start: 15131, end: 15302 },
+        { province: "ปทุมธานี", unit: 20, start: 15303, end: 15641 },
+        { province: "ประจวบคีรีขันธ์", unit: 20, start: 15642, end: 15752 },
+        { province: "ปราจีนบุรี", unit: 20, start: 15753, end: 15797 },
+        { province: "ปัตตานี", unit: 20, start: 15798, end: 15871 },
+        { province: "พระนครศรีอยุธยา", unit: 20, start: 15872, end: 15937 },
+        { province: "พระนครศรีอยุธยา", unit: 21, start: 15938, end: 16023 },
+        { province: "พะเยา", unit: 21, start: 16024, end: 16727 },
+        { province: "พะเยา", unit: 22, start: 16728, end: 17541 },
+        { province: "พะเยา", unit: 23, start: 17542, end: 18315 },
+        { province: "พังงา", unit: 23, start: 18316, end: 18337 },
+        { province: "พังงา", unit: 24, start: 18338, end: 18374 },
+        { province: "พัทลุง", unit: 24, start: 18375, end: 18457 },
+        { province: "พิจิตร", unit: 24, start: 18458, end: 18872 },
+        { province: "พิษณุโลก", unit: 24, start: 18873, end: 19136 },
+        { province: "พิษณุโลก", unit: 25, start: 19137, end: 19792 },
+        { province: "เพชรบุรี", unit: 25, start: 19793, end: 19875 },
+        { province: "เพชรบูรณ์", unit: 25, start: 19876, end: 19941 },
+        { province: "เพชรบูรณ์", unit: 26, start: 19942, end: 20502 },
+        { province: "แพร่", unit: 26, start: 20503, end: 20744 },
+        { province: "แพร่", unit: 27, start: 20745, end: 21558 },
+        { province: "แพร่", unit: 28, start: 21559, end: 22372 },
+        { province: "แพร่", unit: 29, start: 22373, end: 23009 },
+        { province: "ภูเก็ต", unit: 29, start: 23010, end: 23185 },
+        { province: "ภูเก็ต", unit: 30, start: 23186, end: 23214 },
+        { province: "มหาสารคาม", unit: 30, start: 23215, end: 23337 },
+        { province: "มุกดาหาร", unit: 30, start: 23338, end: 23399 },
+        { province: "แม่ฮ่องสอน", unit: 30, start: 23400, end: 23993 },
+        { province: "แม่ฮ่องสอน", unit: 31, start: 23994, end: 24785 },
+        { province: "แม่ฮ่องสอน", unit: 32, start: 24786, end: 25395 },
+        { province: "ยโสธร", unit: 32, start: 25396, end: 25454 },
+        { province: "ยะลา", unit: 32, start: 25455, end: 25530 },
+        { province: "ร้อยเอ็ด", unit: 32, start: 25531, end: 25596 },
+        { province: "ร้อยเอ็ด", unit: 33, start: 25597, end: 25713 },
+        { province: "ระนอง", unit: 33, start: 25714, end: 25739 },
+        { province: "ระยอง", unit: 33, start: 25740, end: 25929 },
+        { province: "ราชบุรี", unit: 33, start: 25930, end: 26078 },
+        { province: "ลพบุรี", unit: 33, start: 26079, end: 26249 },
+        { province: "ลำปาง", unit: 33, start: 26250, end: 26403 },
+        { province: "ลำปาง", unit: 34, start: 26404, end: 27195 },
+        { province: "ลำปาง", unit: 35, start: 27196, end: 27987 },
+        { province: "ลำปาง", unit: 36, start: 27988, end: 28779 },
+        { province: "ลำปาง", unit: 37, start: 28780, end: 29433 },
+        { province: "ลำพูน", unit: 37, start: 29434, end: 29587 },
+        { province: "ลำพูน", unit: 38, start: 29588, end: 30379 },
+        { province: "ลำพูน", unit: 39, start: 30380, end: 30670 },
+        { province: "เลย", unit: 39, start: 30671, end: 30836 },
+        { province: "ศรีสะเกษ", unit: 39, start: 30837, end: 30997 },
+        { province: "สกลนคร", unit: 39, start: 30998, end: 31173 },
+        { province: "สกลนคร", unit: 40, start: 31174, end: 31198 },
+        { province: "สงขลา", unit: 40, start: 31199, end: 31571 },
+        { province: "สตูล", unit: 40, start: 31572, end: 31638 },
+        { province: "สมุทรปราการ", unit: 40, start: 31639, end: 31978 },
+        { province: "สมุทรสงคราม", unit: 41, start: 31979, end: 32007 },
+        { province: "สมุทรสาคร", unit: 41, start: 32008, end: 32102 },
+        { province: "สระแก้ว", unit: 41, start: 32103, end: 32160 },
+        { province: "สระบุรี", unit: 41, start: 32161, end: 32301 },
+        { province: "สิงห์บุรี", unit: 41, start: 32302, end: 32341 },
+        { province: "สุโขทัย", unit: 41, start: 32342, end: 32781 },
+        { province: "สุโขทัย", unit: 42, start: 32782, end: 33271 },
+        { province: "สุพรรณบุรี", unit: 42, start: 33272, end: 33419 },
+        { province: "สุราษฎร์ธานี", unit: 42, start: 33420, end: 33573 },
+        { province: "สุราษฎร์ธานี", unit: 43, start: 33574, end: 33651 },
+        { province: "สุรินทร์", unit: 43, start: 33652, end: 33817 },
+        { province: "หนองคาย", unit: 43, start: 33818, end: 33933 },
+        { province: "หนองบัวลำภู", unit: 43, start: 33934, end: 34010 },
+        { province: "อ่างทอง", unit: 43, start: 34011, end: 34065 },
+        { province: "อำนาจเจริญ", unit: 43, start: 34066, end: 34114 },
+        { province: "อุดรธานี", unit: 43, start: 34115, end: 34378 },
+        { province: "อุดรธานี", unit: 44, start: 34379, end: 34409 },
+        { province: "อุตรดิตถ์", unit: 44, start: 34410, end: 35179 },
+        { province: "อุตรดิตถ์", unit: 45, start: 35180, end: 35297 },
+        { province: "อุทัยธานี", unit: 45, start: 35298, end: 35485 },
+        { province: "อุบลราชธานี", unit: 45, start: 35486, end: 35725 },
+      ];
+
+      function search() {
+        const num = Number(document.getElementById("numberInput").value);
+        const box = document.getElementById("result");
+
+        if (!num) return;
+
+        const found = ranges.find((r) => num >= r.start && num <= r.end);
+
+        box.style.display = "block";
+
+        if (found) {
+          box.className = "result success";
+          box.innerHTML = `
+            <div class="result-header">
+              📍 ${found.province}
+            </div>
+            <div class="result-body">
+              <div class="result-row">
+                <span class="result-label">หน่วยเลือกตั้ง:</span>
+                <span class="result-value">${found.unit}</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">ช่วงลำดับ:</span>
+                <span class="result-value">${found.start.toLocaleString()} - ${found.end.toLocaleString()}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          box.className = "result error";
+          box.innerHTML = "❌ ไม่พบข้อมูล กรุณาตรวจสอบเลขลำดับ";
+        }
+      }
+
+      // Auto-focus input on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("numberInput").focus();
+      });
+    </script>
+  </body>
+</html>
