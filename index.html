@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ค้นหาหน่วยเลือกตั้ง</title>
+    <title>ระบบค้นหาหน่วยเลือกตั้ง | Election Unit Lookup System</title>
 
     <style>
       * {
@@ -14,95 +14,297 @@
 
       body {
         font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", system-ui,
-          sans-serif;
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Roboto",
+          system-ui, sans-serif;
         min-height: 100vh;
+        background: #f5f7fa;
+        color: #2c3e50;
+      }
+
+      /* ===== HEADER ===== */
+      .header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 24px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
         display: flex;
-        justify-content: center;
         align-items: center;
-        padding: 16px;
-
-        /* 🎨 พื้นหลังไล่สีสวยงาม */
-        background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
-        position: relative;
-        overflow: hidden;
+        gap: 20px;
       }
 
-      /* เพิ่มเอฟเฟกต์พื้นหลัง */
-      body::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.1) 1px,
-          transparent 1px
-        );
-        background-size: 50px 50px;
-        animation: moveBackground 20s linear infinite;
+      .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
 
-      @keyframes moveBackground {
-        0% {
-          transform: translate(0, 0);
-        }
-        100% {
-          transform: translate(50px, 50px);
-        }
+      .header-text h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
       }
 
-      /* ===== CONTAINER ===== */
-      .container {
-        width: 100%;
-        max-width: 440px;
-        position: relative;
-        z-index: 1;
+      .header-text p {
+        font-size: 14px;
+        opacity: 0.9;
+        font-weight: 400;
       }
 
-      /* ===== CARD ===== */
-      .card {
-        padding: clamp(24px, 5vw, 36px);
-        border-radius: 24px;
-
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(20px);
-
-        box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.1),
-          0 2px 8px rgba(0, 0, 0, 0.05);
-
-        transition: transform 0.3s ease;
+      /* ===== MAIN CONTENT ===== */
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
       }
 
-      .card:hover {
-        transform: translateY(-4px);
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+        align-items: start;
       }
 
-      /* ===== DIAGRAM ===== */
-      .diagram-container {
-        text-align: center;
-        margin-bottom: 20px;
+      /* ===== DIAGRAM SECTION ===== */
+      .diagram-section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .diagram {
         width: 100%;
-        max-width: 100%;
         height: auto;
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        background: white;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
         cursor: pointer;
-        transition: transform 0.3s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
       .diagram:hover {
-        transform: scale(1.02);
+        transform: scale(1.01);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
-      /* Modal สำหรับดูรูปขยาย */
+      .zoom-hint {
+        text-align: center;
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+
+      /* ===== SEARCH PANEL ===== */
+      .search-panel {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 20px;
+      }
+
+      .search-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .input-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 8px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        font-size: 15px;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        outline: none;
+        transition: all 0.2s ease;
+        background: #f9fafb;
+        font-family: inherit;
+      }
+
+      input:focus {
+        border-color: #2a5298;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+      }
+
+      input::placeholder {
+        color: #9ca3af;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #6b7280;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 15px;
+        border-radius: 8px;
+        border: none;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      /* ===== RESULT ===== */
+      .result {
+        margin-top: 20px;
+        padding: 0;
+        border-radius: 8px;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .result.success {
+        background: #f0fdf4;
+        border: 2px solid #86efac;
+        padding: 20px;
+      }
+
+      .result-header {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #166534;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .result-table tr {
+        border-bottom: 1px solid #bbf7d0;
+      }
+
+      .result-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .result-table td {
+        padding: 10px 0;
+        font-size: 14px;
+      }
+
+      .result-label {
+        color: #15803d;
+        font-weight: 500;
+        width: 40%;
+      }
+
+      .result-value {
+        color: #166534;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      .error {
+        background: #fef2f2;
+        border: 2px solid #fca5a5;
+        padding: 16px;
+        text-align: center;
+        color: #991b1b;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      /* ===== INFO BOXES ===== */
+      .info-box {
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 16px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+
+      .info-box-title {
+        font-weight: 600;
+        color: #1e40af;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .info-box-text {
+        font-size: 13px;
+        color: #1e40af;
+        line-height: 1.6;
+      }
+
+      /* ===== MODAL ===== */
       .modal {
         display: none;
         position: fixed;
@@ -111,7 +313,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.95);
+        background-color: rgba(0, 0, 0, 0.9);
         animation: fadeIn 0.3s ease;
       }
 
@@ -147,11 +349,11 @@
         top: 20px;
         right: 30px;
         color: white;
-        font-size: 40px;
+        font-size: 36px;
         font-weight: bold;
         cursor: pointer;
         z-index: 1000;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
         width: 50px;
         height: 50px;
         border-radius: 50%;
@@ -159,279 +361,147 @@
         align-items: center;
         justify-content: center;
         line-height: 1;
+        transition: background 0.2s ease;
       }
 
       .close-modal:hover {
         background: rgba(0, 0, 0, 0.8);
       }
 
-      .zoom-hint {
-        text-align: center;
-        color: #64748b;
-        font-size: 12px;
-        margin-top: 8px;
-        margin-bottom: 16px;
-      }
-
-      /* ===== TITLE ===== */
-      h2 {
-        text-align: center;
-        margin: 0 0 8px;
-        font-size: clamp(20px, 5vw, 26px);
-        color: #1e293b;
-        font-weight: 700;
-      }
-
-      .subtitle {
-        text-align: center;
-        color: #64748b;
-        font-size: clamp(13px, 3vw, 15px);
-        margin-bottom: 24px;
-      }
-
-      /* ===== INPUT GROUP ===== */
-      .input-group {
-        margin-bottom: 16px;
-      }
-
-      .input-wrapper {
-        position: relative;
-      }
-
-      input {
-        width: 100%;
-        padding: 16px 16px 16px 48px;
-        font-size: clamp(15px, 4vw, 17px);
-        border-radius: 14px;
-        border: 2px solid #e2e8f0;
-        outline: none;
-        transition: all 0.3s ease;
-        background: #f8fafc;
-        font-family: inherit;
-      }
-
-      input:focus {
-        border-color: #667eea;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-      }
-
-      input::placeholder {
-        color: #94a3b8;
-      }
-
-      /* ไอคอนในช่อง input */
-      .input-icon {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 20px;
-        pointer-events: none;
-      }
-
-      /* ===== BUTTON ===== */
-      button {
-        width: 100%;
-        padding: 16px;
-        font-size: clamp(15px, 4vw, 17px);
-        border-radius: 14px;
-        border: none;
-
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        font-family: inherit;
-      }
-
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-      }
-
-      button:active {
-        transform: translateY(0);
-      }
-
-      /* ===== RESULT ===== */
-      .result {
-        margin-top: 20px;
-        padding: 20px;
-        border-radius: 16px;
-        display: none;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .result.success {
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        border: 2px solid #86efac;
-      }
-
-      .result-header {
-        font-size: clamp(18px, 5vw, 22px);
-        font-weight: 700;
-        margin-bottom: 12px;
-        color: #166534;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .result-body {
-        font-size: clamp(14px, 4vw, 16px);
-        color: #15803d;
-        line-height: 1.6;
-      }
-
-      .result-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(22, 101, 52, 0.1);
-      }
-
-      .result-row:last-child {
-        border-bottom: none;
-      }
-
-      .result-label {
-        font-weight: 500;
-        color: #15803d;
-      }
-
-      .result-value {
-        font-weight: 700;
-        color: #166534;
-      }
-
-      .error {
-        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        border: 2px solid #fca5a5;
-        text-align: center;
-        color: #991b1b;
-        font-weight: 600;
-        font-size: clamp(15px, 4vw, 17px);
-      }
-
       /* ===== FOOTER ===== */
       .footer {
-        text-align: center;
-        margin-top: 20px;
-        color: rgba(255, 255, 255, 0.9);
-        font-size: clamp(12px, 3vw, 14px);
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        padding: 24px 0;
+        margin-top: 60px;
       }
 
-      /* ===== MOBILE OPTIMIZATIONS ===== */
-      @media (max-width: 480px) {
-        body {
-          padding: 12px;
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 968px) {
+        .content-grid {
+          grid-template-columns: 1fr;
         }
 
-        .card {
-          border-radius: 20px;
+        .search-panel {
+          position: static;
         }
 
-        input,
-        button {
-          padding: 14px 14px 14px 44px;
+        .header-content {
+          flex-direction: column;
+          text-align: center;
         }
 
-        .result {
+        .header-text h1 {
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .main-container {
+          padding: 20px 12px;
+        }
+
+        .diagram-section,
+        .search-panel {
           padding: 16px;
         }
-      }
 
-      /* สำหรับหน้าจอเล็กมาก */
-      @media (max-width: 360px) {
-        .card {
-          padding: 20px;
+        .section-title,
+        .search-title {
+          font-size: 16px;
         }
 
-        .logo {
-          width: 60px;
-          height: 60px;
-        }
-      }
-
-      /* โหมดแนวนอน */
-      @media (orientation: landscape) and (max-height: 500px) {
-        body {
-          padding: 12px;
-        }
-
-        .card {
-          padding: 20px;
-        }
-
-        .logo {
-          width: 60px;
-          height: 60px;
-        }
-
-        h2 {
-          margin-bottom: 4px;
-        }
-
-        .subtitle {
-          margin-bottom: 16px;
+        .logo-icon {
+          width: 50px;
+          height: 50px;
+          font-size: 26px;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      <div class="card">
-        <h2>ค้นหาหน่วยเลือกตั้ง</h2>
-        <p class="subtitle">กรอกเลขลำดับเพื่อค้นหาข้อมูล</p>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="logo-icon">🗳️</div>
+        <div class="header-text">
+          <h1>ระบบค้นหาหน่วยเลือกตั้ง</h1>
+          <p>Election Unit Lookup System - ค้นหาข้อมูลหน่วยเลือกตั้งด้วยเลขลำดับ</p>
+        </div>
+      </div>
+    </div>
 
-        <!-- 📊 แผนผัง -->
-        <div class="diagram-container">
+    <!-- Main Content -->
+    <div class="main-container">
+      <div class="content-grid">
+        <!-- Diagram Section -->
+        <div class="diagram-section">
+          <h2 class="section-title">
+            <span>📊</span>
+            <span>แผนผังหน่วยออกเสียงประชามติ</span>
+          </h2>
           <img
             src="logo.jpg"
             class="diagram"
             alt="แผนผังหน่วยออกเสียงประชามติ"
             onclick="openModal()"
           />
-          <div class="zoom-hint">👆 แตะที่รูปเพื่อขยาย</div>
-        </div>
+          <div class="zoom-hint">👆 คลิกที่แผนผังเพื่อดูขนาดเต็ม</div>
 
-        <div class="input-group">
-          <div class="input-wrapper">
-            <span class="input-icon">🔍</span>
-            <input
-              id="numberInput"
-              placeholder="กรอกเลขลำดับ 1 - 35,725"
-              onkeypress="if (event.key === 'Enter') search();"
-              inputmode="numeric"
-            />
+          <div class="info-box">
+            <div class="info-box-title">📌 วิธีใช้งาน</div>
+            <div class="info-box-text">
+              กรอกเลขลำดับที่ต้องการค้นหา (1-35,725) 
+              ระบบจะแสดงข้อมูลจังหวัด หน่วยเลือกตั้ง และช่วงลำดับที่เกี่ยวข้อง
+            </div>
           </div>
         </div>
 
-        <button onclick="search()">🔎 ค้นหาข้อมูล</button>
+        <!-- Search Panel -->
+        <div class="search-panel">
+          <h2 class="search-title">ค้นหาข้อมูล</h2>
 
-        <div id="result" class="result"></div>
+          <div class="input-group">
+            <label class="input-label">เลขลำดับ (Sequence Number)</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔍</span>
+              <input
+                id="numberInput"
+                placeholder="กรอกเลขลำดับ 1 - 35,725"
+                onkeypress="if (event.key === 'Enter') search();"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+
+          <button onclick="search()">
+            <span>🔎</span>
+            <span>ค้นหาข้อมูล</span>
+          </button>
+
+          <div id="result" class="result"></div>
+        </div>
       </div>
-
-      <div class="footer">📊 ระบบค้นหาหน่วยเลือกตั้ง</div>
     </div>
 
-    <!-- Modal สำหรับดูรูปขยาย -->
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-content">
+        © 2026 ระบบค้นหาหน่วยเลือกตั้ง | Election Unit Lookup System
+      </div>
+    </div>
+
+    <!-- Modal -->
     <div id="imageModal" class="modal" onclick="closeModal()">
       <span class="close-modal">&times;</span>
       <div class="modal-content">
@@ -599,20 +669,24 @@
             <div class="result-header">
               📍 ${found.province}
             </div>
-            <div class="result-body">
-              <div class="result-row">
-                <span class="result-label">หน่วยเลือกตั้ง:</span>
-                <span class="result-value">${found.unit}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">ช่วงลำดับ:</span>
-                <span class="result-value">${found.start.toLocaleString()} - ${found.end.toLocaleString()}</span>
-              </div>
-            </div>
+            <table class="result-table">
+              <tr>
+                <td class="result-label">หน่วยเลือกตั้ง:</td>
+                <td class="result-value">${found.unit}</td>
+              </tr>
+              <tr>
+                <td class="result-label">ช่วงลำดับ:</td>
+                <td class="result-value">${found.start.toLocaleString()} - ${found.end.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td class="result-label">จำนวนทั้งหมด:</td>
+                <td class="result-value">${(found.end - found.start + 1).toLocaleString()} รายการ</td>
+              </tr>
+            </table>
           `;
         } else {
           box.className = "result error";
-          box.innerHTML = "❌ ไม่พบข้อมูล กรุณาตรวจสอบเลขลำดับ";
+          box.innerHTML = "❌ ไม่พบข้อมูล กรุณาตรวจสอบเลขลำดับ (1-35,725)";
         }
       }
 
